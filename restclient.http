@@ -1,0 +1,39 @@
+POST http://localhost:4004/api-bill-of-material-srv/MaterialBOM
+Content-Type: application/json
+
+{
+    "BillOfMaterial": "123",
+    "BillOfMaterialCategory": "c",
+    "BillOfMaterialVariant": "v1",
+    "BillOfMaterialVersion": "0001",
+    "EngineeringChangeDocument": "cdoc123",
+    "Material": "abcmat",
+    "Plant": "AU01"
+}
+
+###
+
+POST http://localhost:4004/api-changemaster/A_ChangeMaster
+Content-Type: application/json
+
+{
+    "ChangeNumber": "123",
+    "ChangeNumberDescription": "change 123"
+}
+
+###
+POST http://localhost:4004/first-lot-control/UpdateBOMStatus
+Content-Type: application/json
+
+{
+    "data": {
+        "BillOfMaterial": "00004306",
+        "BillOfMaterialCategory": "M",
+        "BillOfMaterialVariant": "1",
+        "BillOfMaterialVersion": "",
+        "EngineeringChangeDocument": "10002305",
+        "Material": "10000023",
+        "Plant": "NZ01",
+        "BillOfMaterialStatus": "9"
+    }
+}

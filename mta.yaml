@@ -1,0 +1,57 @@
+---
+_schema-version: "3.1"
+ID: s4-sch-first-lot-control
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npx -p @sap/cds-dk cds build --production
+
+modules:
+  - name: s4-sch-first-lot-control-srv
+    type: nodejs
+    path: gen/srv
+    requires:
+      - name: s4-sch-first-lot-control-xsuaa
+      - name: s4-sch-first-lot-control-destination
+      - name: s4-sch-first-lot-control-connectivity
+      - name: eminst
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+
+resources:
+  - name: s4-sch-first-lot-control-connectivity
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: connectivity
+      service-name: s4-sch-first-lot-control-connectivity
+      service-plan: lite
+  - name: s4-sch-first-lot-control-destination
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: destination
+      service-name: s4-sch-first-lot-control-destination
+      service-plan: lite
+    requires:
+      - name: srv-api
+  - name: s4-sch-first-lot-control-xsuaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      path: ./xs-security.json
+      service: xsuaa
+      service-plan: application
+      config:
+        xsappname: s4-sch-first-lot-control-xsuaa
+        tenant-mode: dedicated
+  - name: eminst
+    type: org.cloudfoundry.existing-service
